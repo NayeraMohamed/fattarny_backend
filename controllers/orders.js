@@ -58,8 +58,21 @@ exports.create_order = (req, res) => {
     });
 }
 
+exports.create_orders = (req, res) => {
+    var newOrders = req.body;
 
-
+    MongoClient.connect(url, function(err, db) {
+        if (err) res.status(500).send("Bad Connection");
+         
+        const dbo = db.db(dbName);
+         dbo.collection("Orders").insertMany(newOrders, function(err, response) {
+            if (err) res.status(404).send("Not found");
+            res.status(200).send(response);
+            
+            db.close();
+        });   
+    });
+}
 
 exports.cancel_order = (req, res) => {
     console.log(tag + "-cancel_order-" + res);
