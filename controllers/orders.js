@@ -1,5 +1,5 @@
 var mongo = require('mongodb');
-
+var mongoose=require('mongoose')
 var MongoClient = require('mongodb').MongoClient;
 var url = "mongodb+srv://nayera:1234@cluster0-dwvui.mongodb.net";
 
@@ -28,6 +28,7 @@ exports.set_paid = (req, res) => {
     console.log(tag + "-set_paid-" + res);
     var orderId = parseInt(req.params.order_id);
 
+    
     MongoClient.connect(url, function(err, db) {
         console.log(tag + "-mongo_connection-error" + err);
          if (err) throw err;
@@ -45,7 +46,41 @@ exports.set_paid = (req, res) => {
     });
 }
 
-//Make new order.
-//get all unpaid orders for today.
+//Create new order.
+//get all paid orders for today.
 //get all orders for today.
+
+
 //Cancel order.
+exports.cancel_order = (req, res) => {
+    console.log(tag + "-cancel_order-" + res);
+    var orderId = (req.params.order_id);
+    
+    MongoClient.connect(url, function(err, db) {
+      if (err) throw err;
+      var dbo = db.db(dbName);
+      var myquery = { _id:mongoose.Types.ObjectId( orderId) };//orderID
+
+      dbo.collection("Orders").deleteOne(myquery, function(err, obj) {
+        if (err) throw err;
+        console.log("1 document deleted");
+        db.close();
+        res.status(200).send(obj);
+      });
+    });
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+}
