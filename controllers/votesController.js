@@ -20,7 +20,7 @@ exports.addVote = function(req, serverRes) {
           }
           else
           {
-            serverRes.status(200).send("okay");
+            serverRes.status(200);
           }         
           db.close();
         });
