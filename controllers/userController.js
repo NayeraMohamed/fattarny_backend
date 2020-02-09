@@ -16,7 +16,7 @@ exports.login = function(req, res) {
           } 
           if(user == null) 
           {
-            res.status(404).send("Authentication Error");
+            res.status(401).send("Authentication Error");
           }
           else
           {
