@@ -12,7 +12,7 @@ exports.login = function(req, res) {
         dbo.collection("Users").findOne({user_id: req.body.user_id}, function(err, user) {
           if (err)
           {
-            return res.status(500).send("Weak Internet Connection");;
+            return res.status(500).send("Weak Internet Connection");
           } 
           if(user == null) 
           {

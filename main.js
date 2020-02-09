@@ -9,6 +9,8 @@ app.use(express.urlencoded({extended: true}))
 
 var userRouter = require('./routes/users');
 app.use('/users', userRouter);
+var votesRouter = require('./routes/votes');
+app.use('/votes', votesRouter);
 
 app.get('/', (req, res) => {
     res.send('Hello World')
