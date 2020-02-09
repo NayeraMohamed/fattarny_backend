@@ -58,8 +58,8 @@ exports.create_order = (req, res) => {
     });
 }
 
-//get all paid orders for today.
-//get all orders for today.
+
+
 
 exports.cancel_order = (req, res) => {
     console.log(tag + "-cancel_order-" + res);
@@ -77,19 +77,46 @@ exports.cancel_order = (req, res) => {
         res.status(200).send(obj);
       });
     });
+}   
     
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+//get all orders for today.
+exports.get_all = (req, res) => {
+    console.log(tag + "-get_all-" + res);
+    var date_tod = (req.params.date);
+    MongoClient.connect(url,function(err,db){
+    if(err) throw err;
+    var dbo=db.db(dbName);
+    // var myquery = { _id:mongoose.Types.ObjectId( orderId) };//orderID
+    var query = { date:date_tod };
+    dbo.collection("Orders").find(query).toArray(function(err, result)
+        // dbo.collection("Orders").find({projection:(date:date)}).toArray(function(err, result)
+        {
+            if (err)throw err;
+            console.log(result);
+            db.close;
+            res.status(200).send(result);
+        });
+    });
+}
+//get all paid orders for today.
+exports.get_all_paid = (req, res) => {
+    console.log(tag + "-get_all_paid" + res);
+    var date_tod = (req.params.date);
+    var  is_true=JSON.parse(req.params.is_paid);
+//var pan=(req.params.date,req.params.is_paid);
+    MongoClient.connect(url,function(err,db){
+    if(err) throw err;
+    var dbo=db.db(dbName);
+    // var myquery = { _id:mongoose.Types.ObjectId( orderId) };//orderID
+    var query = { date:date_tod ,is_paid:is_true };
+  //var query={ pan:date,is_paid};
+    dbo.collection("Orders").find(query).toArray(function(err, result)
+        // dbo.collection("Orders").find({projection:(date:date)}).toArray(function(err, result)
+        {
+            if (err)throw err;
+            console.log(result);
+            db.close;
+            res.status(200).send(result);
+        });
+    });
 }
