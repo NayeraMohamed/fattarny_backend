@@ -19,7 +19,8 @@ var userRouter = require('./routes/users');
 app.use('/users', userRouter);
 var votesRouter = require('./routes/votes');
 app.use('/votes', votesRouter);
-
+var winnerRouter = require('./routes/winnerRestaurants');
+app.use('/menuItems', winnerRouter);
 app.get('/', (req, res) => {
     res.send('Hello World')
 });
