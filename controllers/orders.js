@@ -5,6 +5,8 @@ var url = "mongodb+srv://nayera:1234@cluster0-dwvui.mongodb.net";
 const dbName = "Fattarny";
 const tag = "Controller_Orders";
 
+var helper_functions = require('../helper_functions');
+
 exports.get_orders_history = (req, res) => {
     var userId = req.params.user_id;
 
@@ -44,6 +46,7 @@ exports.set_is_paid = (req, res) => {
 
 exports.create_order = (req, res) => {
     var newOrder = req.body;
+    newOrder = helper_functions.calculate_order_total_sum(newOrder);
 
     MongoClient.connect(url, function(err, db) {
         if (err) res.status(500).send("Bad Connection");
@@ -60,7 +63,8 @@ exports.create_order = (req, res) => {
 
 exports.create_orders = (req, res) => {
     var newOrders = req.body;
-
+    newOrders= helper_functions.calculate_orders_total_sum(newOrders);
+    
     MongoClient.connect(url, function(err, db) {
         if (err) res.status(500).send("Bad Connection");
          
