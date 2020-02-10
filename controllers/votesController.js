@@ -7,14 +7,15 @@ const dbName = constants.dbName;
 exports.addVote = function(req, res) {
     MongoClient.connect(dbConnectionString, function(err, db) {
         if (err) //connection error
-          res.status(500).send("Weak Internet Connection");
+          return res.status(500).send("Weak Internet Connection");
 
         var dbo = db.db(dbName);
         var newVote = { 
-            user_id: req.body.user_id,
-            id: req.body.id,
-            date: req.body.date};
-        dbo.collection("votesHistory").insertOne(newVote, function(err, vote) {
+          user_id : req.body.user_id,
+          id      : req.body.id,
+          date    : req.body.date
+        };
+        dbo.collection("votesHistory").insertOne(newVote, function(err, result) {
           if (err)
             res.status(500).send("Weak Internet Connection");
           else

@@ -9,15 +9,15 @@ exports.get_restaurant_items = (req, res) => {
     
     MongoClient.connect(dbConnectionString, function(err, db) {
         if (err)
-            res.status(500).send("Connection Error");
+            return res.status(500).send("Connection Error");
         
         const dbo = db.db(dbName);
         var query = {restaurant_id : restaurantId};
          dbo.collection("Items").find(query).toArray(function(err, items) {
             if (err)
                 res.status(500).send("Connection Error");
-            
-            res.status(200).send(items);
+            else
+                res.status(200).send(items);
             db.close();
         });   
     });

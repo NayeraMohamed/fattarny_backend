@@ -1,9 +1,9 @@
 const Joi = require('joi'); 
 
-exports.validate_user = (user) =>{
+exports.validate_user = (user) => {
     const schema = {
-        user_id : Joi.string().min(5).required(),
-        email : Joi.string().email().required(),
+        user_id  : Joi.string().min(5).required(),
+        email    : Joi.string().email().required(),
         password : Joi.string().min(5).required()
     };
     

@@ -13,15 +13,15 @@ exports.get_orders_history = (req, res) => {
 
     MongoClient.connect(dbConnectionString, function(err, db) {
         if (err) 
-            res.status(500).send("Bad Connection");
+            return res.status(500).send("Bad Connection");
 
          const dbo = db.db(dbName);
          var query = {user_id : userId, is_paid : true};
          dbo.collection("Orders").find(query).toArray(function(err, orders) {
             if (err) 
                 res.status(500).send("Bad Connection");
-
-            res.status(200).send(orders);
+            else
+                res.status(200).send(orders);
             db.close();
         });   
     });
@@ -33,7 +33,7 @@ exports.set_is_paid = (req, res) => {
 
     MongoClient.connect(dbConnectionString, function(err, db) {
         if (err) 
-            res.status(500).send("Bad Connection");    
+            return res.status(500).send("Bad Connection");
 
         const dbo = db.db(dbName);
         var query = {_id : mongoose.Types.ObjectId(orderId)};
@@ -41,8 +41,8 @@ exports.set_is_paid = (req, res) => {
          dbo.collection("Orders").updateOne(query, newValue, function(err, response) {
             if (err) 
                 res.status(500).send("Bad Connection");
-                
-            res.status(200).send(response);
+            else
+                res.status(200).send(response);
             db.close();
         });   
     });
@@ -54,14 +54,14 @@ exports.create_order = (req, res) => {
 
     MongoClient.connect(dbConnectionString, function(err, db) {
         if (err) 
-            res.status(500).send("Bad Connection"); 
+            return res.status(500).send("Bad Connection");
 
         const dbo = db.db(dbName);
          dbo.collection("Orders").insertOne(newOrder, function(err, response) {
             if (err) 
                 res.status(500).send("Bad Connection");
-
-            res.status(200).send(response);
+            else
+                res.status(200).send(response);
             db.close();
         });   
     });
@@ -73,14 +73,14 @@ exports.create_orders = (req, res) => {
 
     MongoClient.connect(dbConnectionString, function(err, db) {
         if (err) 
-            res.status(500).send("Bad Connection");
+            return res.status(500).send("Bad Connection");
 
         const dbo = db.db(dbName);
          dbo.collection("Orders").insertMany(newOrders, function(err, response) {
             if (err) 
                 res.status(500).send("Bad Connection");
-
-            res.status(200).send(response);
+            else
+                res.status(200).send(response);
             db.close();
         });   
     });
@@ -90,37 +90,37 @@ exports.cancel_order = (req, res) => {
     var orderId = (req.params.order_id);
     
     MongoClient.connect(dbConnectionString, function(err, db) {
-    if (err) 
-        res.status(500).send("Bad Connection");
-
-      var dbo = db.db(dbName);
-      var myquery = { _id : mongoose.Types.ObjectId(orderId) };
-
-      dbo.collection("Orders").deleteOne(myquery, function(err, obj) {
         if (err) 
-            res.status(500).send("Bad Connection");
-        
-        res.status(200).send(obj);
-        db.close();
-      });
+            return res.status(500).send("Bad Connection");
+
+        var dbo = db.db(dbName);
+        var myquery = { _id : mongoose.Types.ObjectId(orderId) };
+
+        dbo.collection("Orders").deleteOne(myquery, function(err, obj) {
+            if (err) 
+                res.status(500).send("Bad Connection");
+            else
+                res.status(200).send(obj);
+            db.close();
+        });
     });
 }   
     
 exports.get_all = (req, res) => {
-    var date_tod = (req.params.date);
+    var date_today = (req.params.date);
     
-    MongoClient.connect(dbConnectionString,function(err,db){
+    MongoClient.connect(dbConnectionString, function(err, db){
         if (err) 
-            res.status(500).send("Bad Connection");
+            return res.status(500).send("Bad Connection");
 
-        var dbo=db.db(dbName);
-        var query = { date:date_tod };
+        var dbo = db.db(dbName);
+        var query = { date : date_today };
         dbo.collection("Orders").find(query).toArray(function(err, result)
         {
             if (err) 
                 res.status(500).send("Bad Connection");
-                
-            res.status(200).send(result);
+            else
+                res.status(200).send(result);
             db.close;
         });
     });
@@ -128,20 +128,20 @@ exports.get_all = (req, res) => {
 
 exports.get_all_paid = (req, res) => {
     var date_tod = (req.params.date);
-    var  is_true=JSON.parse(req.params.is_paid);
+    var  is_true = JSON.parse(req.params.is_paid);
 
-    MongoClient.connect(dbConnectionString,function(err,db){
+    MongoClient.connect(dbConnectionString, function(err, db){
         if (err) 
-            res.status(500).send("Bad Connection");
+            return res.status(500).send("Bad Connection");
 
         var dbo=db.db(dbName);
-        var query = { date:date_tod ,is_paid:is_true };
+        var query = { date : date_tod, is_paid : is_true };
         dbo.collection("Orders").find(query).toArray(function(err, result)
         {
             if (err) 
                 res.status(500).send("Bad Connection");
-
-            res.status(200).send(result);
+            else
+                res.status(200).send(result);
             db.close;
         });
     });

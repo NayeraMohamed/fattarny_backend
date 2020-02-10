@@ -7,15 +7,15 @@ const dbName = constants.dbName;
 exports.get_all_restaurants = (req, res) =>{
     MongoClient.connect(dbConnectionString, function(err, db) {
         if (err)
-            res.status(500).send("Connection Error");
+            return res.status(500).send("Bad Connection");
 
         const dbo = db.db(dbName);
 
         dbo.collection("Restaurants").find({}).toArray(function(err, restaurants) {
             if (err)
                 res.status(500).send("Connection Error");
-            
-            res.status(200).send(restaurants);
+            else
+                res.status(200).send(restaurants);
             db.close();
         });   
     });
@@ -27,7 +27,7 @@ exports.get_single_restaurant = (req, res) => {
     
     MongoClient.connect(dbConnectionString, function(err, db) {
         if (err)
-            res.status(500).send("Connection Error");
+            return res.status(500).send("Bad Connection");
 
          const dbo = db.db(dbName);
 
@@ -35,8 +35,8 @@ exports.get_single_restaurant = (req, res) => {
          dbo.collection("Restaurants").find(query).toArray(function(err, restaurant) {
             if (err) 
                 res.status(500).send("Connection Error");
-                
-            res.status(200).send(restaurant);
+            else
+                res.status(200).send(restaurant);
             db.close();
         });   
     });

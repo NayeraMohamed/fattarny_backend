@@ -7,19 +7,16 @@ const dbName = constants.dbName;
 exports.getTodaysWinner = function(req, res) {
     MongoClient.connect(dbConnectionString, function(err, db) {
         if (err) //connection error
-        {
           return res.status(500).send("Weak Internet Connection");
-        } 
+
         var dbo = db.db(dbName);
         dbo.collection("winnerRestaurants").findOne({date: req.params.date}, function(err, winner) {
           if (err)
-          {
             res.status(500).send("Weak Internet Connection");
-          } 
+
           if(winner != null) 
-          {
             res.status(200).send(winner);
-          }
+
           else
           {
             var query = {date: req.params.date};
@@ -49,13 +46,10 @@ exports.getTodaysWinner = function(req, res) {
                     date: req.params.date};
                 dbo.collection("winnerRestaurants").insertOne(newWinner, function(err, r) {
                     if (err)
-                    {
                       res.status(500).send("Weak Internet Connection");
-                    }
                     else
-                    {
                       res.status(200).send(newWinner);
-                    } 
+
                     db.close();
                   });  
                 }      
