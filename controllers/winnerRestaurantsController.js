@@ -16,7 +16,7 @@ exports.getTodaysWinner = function(req, res) {
           } 
           if(winner != null) 
           {
-            res.status(200).send(winner.id);
+            res.status(200).send(winner);
           }
           else
           {
@@ -27,7 +27,6 @@ exports.getTodaysWinner = function(req, res) {
               {
                 for(var i = 0; i < result.length; i++) {
                     var obj = result[i];
-                    //console.log(obj);
                     var rest = new Map();
                     if(rest.has(obj.id)) {rest.set(obj.id, rest.get(obj.id)+1);}
                     else {rest.set(obj.id, 1);}
@@ -35,7 +34,7 @@ exports.getTodaysWinner = function(req, res) {
                 var max = -1;
                 var winnerId;
                 var value;
-                for (let [k, v] of rest) {
+                for (var [k, v] of rest) {
                   if(v > max){
                       max = v;
                       winnerId = k;
@@ -44,16 +43,14 @@ exports.getTodaysWinner = function(req, res) {
                 var newWinner = { 
                     id: winnerId,
                     date: req.params.date};
-                    console.log(newWinner);
                 dbo.collection("winnerRestaurants").insertOne(newWinner, function(err, r) {
                     if (err)
                     {
-                      console.log(err);
                       res.status(500).send("Weak Internet Connection");
                     }
                     else
                     {
-                      res.status(200).send(winnerId);
+                      res.status(200).send(newWinner);
                     } 
                     db.close();
                   });              
