@@ -25,7 +25,9 @@ exports.getTodaysWinner = function(req, res) {
               if (err) res.status(500).send("Weak Internet Connection");
               else 
               {
-                for(var i = 0; i < result.length; i++) {
+                if(result.length > 0)
+                {
+                  for(var i = 0; i < result.length; i++) {
                     var obj = result[i];
                     var rest = new Map();
                     if(rest.has(obj.id)) {rest.set(obj.id, rest.get(obj.id)+1);}
@@ -53,7 +55,16 @@ exports.getTodaysWinner = function(req, res) {
                       res.status(200).send(newWinner);
                     } 
                     db.close();
-                  });              
+                  });  
+                }      
+                else
+                {
+                  var newWinner = { 
+                    id: "0",
+                    date: req.params.date};
+                  res.status(200).send(newWinner);
+                  db.close();
+                }      
               }
             });          
           }         
