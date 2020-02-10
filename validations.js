@@ -4,7 +4,8 @@ exports.validate_user = (user) => {
     const schema = {
         user_id  : Joi.string().min(5).required(),
         email    : Joi.string().email().required(),
-        password : Joi.string().min(5).required()
+        password : Joi.string().min(5).required(),
+        is_admin : Joi.string().valid(["0", "1"])
     };
     
     const result = Joi.validate(user, schema);
