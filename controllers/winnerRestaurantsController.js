@@ -1,14 +1,16 @@
-const mongo = require('mongodb');
-var MongoClient = require('mongodb').MongoClient;
-var url = "mongodb+srv://nayera:1234@cluster0-dwvui.mongodb.net";
+const MongoClient = require('mongodb').MongoClient;
+
+const constants = require('../constants');
+const dbConnectionString = constants.dbConnectionString;
+const dbName = constants.dbName;
 
 exports.getTodaysWinner = function(req, res) {
-    MongoClient.connect(url, function(err, db) {
+    MongoClient.connect(dbConnectionString, function(err, db) {
         if (err) //connection error
         {
           return res.status(500).send("Weak Internet Connection");
         } 
-        var dbo = db.db("Fattarny");
+        var dbo = db.db(dbName);
         dbo.collection("winnerRestaurants").findOne({date: req.params.date}, function(err, winner) {
           if (err)
           {
@@ -70,4 +72,4 @@ exports.getTodaysWinner = function(req, res) {
           }         
         });
       });
-  };
+};

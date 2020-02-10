@@ -1,26 +1,23 @@
-const joi = require('joi');  
-const mongo = require('mongodb');
 const express = require('express');
 const app = express();
 
 const RestaurantsRouter = require('./routes/restaurants');
-const ItemsRouter = require('./routes/items');
-const OrdersRouter = require('./routes/orders');
+const ItemsRouter       = require('./routes/items');
+const OrdersRouter      = require('./routes/orders');
+const UserRouter        = require('./routes/users');
+const VotesRouter       = require('./routes/votes');
+const WinnerRouter      = require('./routes/winnerRestaurants');
 
-/////////////////////////
 app.use(express.json())
-app.use(express.urlencoded({extended: true}))
+app.use(express.urlencoded({extended : true}))
 
 app.use('/restaurants', RestaurantsRouter);
 app.use('/items', ItemsRouter);
 app.use('/orders', OrdersRouter);
+app.use('/users', UserRouter);
+app.use('/votes', VotesRouter);
+app.use('/menuItems', WinnerRouter);
 
-var userRouter = require('./routes/users');
-app.use('/users', userRouter);
-var votesRouter = require('./routes/votes');
-app.use('/votes', votesRouter);
-var winnerRouter = require('./routes/winnerRestaurants');
-app.use('/menuItems', winnerRouter);
 app.get('/', (req, res) => {
     res.send('Hello World')
 });

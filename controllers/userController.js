@@ -1,14 +1,18 @@
-const mongo = require('mongodb');
-var MongoClient = require('mongodb').MongoClient;
-var url = "mongodb+srv://nayera:1234@cluster0-dwvui.mongodb.net";
+const MongoClient = require('mongodb').MongoClient;
+
+const validations = require('../validations');
+
+const constants = require('../constants');
+const dbConnectionString = constants.dbConnectionString;
+const dbName = constants.dbName;
 
 exports.login = function(req, res) {
-    MongoClient.connect(url, function(err, db) {
+    MongoClient.connect(dbConnectionString, function(err, db) {
         if (err) //connection error
         {
           res.status(500).send("Weak Internet Connection");
         } 
-        var dbo = db.db("Fattarny");
+        var dbo = db.db(dbName);
         dbo.collection("Users").findOne({user_id: req.body.user_id}, function(err, user) {
           if (err)
           {
@@ -35,12 +39,18 @@ exports.login = function(req, res) {
 };
 
 exports.register = function(req, res) {
-  MongoClient.connect(url, function(err, db) {
+  var new_user = req.body;
+  var validationResponse = validations.validate_user(new_user);
+
+  if(!validationResponse.isValid)
+    res.status(400).send(validationResponse.message);
+  else{
+    MongoClient.connect(dbConnectionString, function(err, db) {
       if (err) //connection error
       {
         return res.status(500).send("Weak Internet Connection");
       } 
-      var dbo = db.db("Fattarny");
+      var dbo = db.db(dbName);
       dbo.collection("Users").findOne({user_id: req.body.user_id}, function(err, user) {
         if (err)
         {
@@ -72,4 +82,5 @@ exports.register = function(req, res) {
         db.close();
       });
     });
+  }
 };

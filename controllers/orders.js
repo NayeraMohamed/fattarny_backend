@@ -1,24 +1,27 @@
-var mongo = require('mongodb');
-var mongoose=require('mongoose')
-var MongoClient = require('mongodb').MongoClient;
-var url = "mongodb+srv://nayera:1234@cluster0-dwvui.mongodb.net";
-const dbName = "Fattarny";
-const tag = "Controller_Orders";
+const mongoose = require('mongoose')
+const MongoClient = require('mongodb').MongoClient;
 
-var helper_functions = require('../helper_functions');
+const helper_functions = require('../helper_functions');
+
+const constants = require('../constants');
+const dbConnectionString = constants.dbConnectionString;
+const dbName = constants.dbName;
+
 
 exports.get_orders_history = (req, res) => {
     var userId = req.params.user_id;
 
-    MongoClient.connect(url, function(err, db) {
-         if (err) res.status(500).send("Bad Connection");
+    MongoClient.connect(dbConnectionString, function(err, db) {
+        if (err) 
+            res.status(500).send("Bad Connection");
 
          const dbo = db.db(dbName);
          var query = {user_id : userId, is_paid : true};
          dbo.collection("Orders").find(query).toArray(function(err, orders) {
-            if (err) res.status(404).send("Not found");
+            if (err) 
+                res.status(500).send("Bad Connection");
+
             res.status(200).send(orders);
-            
             db.close();
         });   
     });
@@ -28,17 +31,18 @@ exports.set_is_paid = (req, res) => {
     var orderId = req.params.order_id;
     var isPaid =  JSON.parse(req.params.is_paid);
 
-    MongoClient.connect(url, function(err, db) {
-        if (err) res.status(500).send("Bad Connection");
-         
+    MongoClient.connect(dbConnectionString, function(err, db) {
+        if (err) 
+            res.status(500).send("Bad Connection");    
+
         const dbo = db.db(dbName);
         var query = {_id : mongoose.Types.ObjectId(orderId)};
         var newValue = {$set: {is_paid : isPaid}};
-
          dbo.collection("Orders").updateOne(query, newValue, function(err, response) {
-            if (err) res.status(404).send("Not found");
+            if (err) 
+                res.status(500).send("Bad Connection");
+                
             res.status(200).send(response);
-            
             db.close();
         });   
     });
@@ -48,14 +52,16 @@ exports.create_order = (req, res) => {
     var newOrder = req.body;
     newOrder = helper_functions.calculate_order_total_sum(newOrder);
 
-    MongoClient.connect(url, function(err, db) {
-        if (err) res.status(500).send("Bad Connection");
-         
+    MongoClient.connect(dbConnectionString, function(err, db) {
+        if (err) 
+            res.status(500).send("Bad Connection"); 
+
         const dbo = db.db(dbName);
          dbo.collection("Orders").insertOne(newOrder, function(err, response) {
-            if (err) res.status(404).send("Not found");
+            if (err) 
+                res.status(500).send("Bad Connection");
+
             res.status(200).send(response);
-            
             db.close();
         });   
     });
@@ -64,76 +70,79 @@ exports.create_order = (req, res) => {
 exports.create_orders = (req, res) => {
     var newOrders = req.body;
     newOrders= helper_functions.calculate_orders_total_sum(newOrders);
-    
-    MongoClient.connect(url, function(err, db) {
-        if (err) res.status(500).send("Bad Connection");
-         
+
+    MongoClient.connect(dbConnectionString, function(err, db) {
+        if (err) 
+            res.status(500).send("Bad Connection");
+
         const dbo = db.db(dbName);
          dbo.collection("Orders").insertMany(newOrders, function(err, response) {
-            if (err) res.status(404).send("Not found");
+            if (err) 
+                res.status(500).send("Bad Connection");
+
             res.status(200).send(response);
-            
             db.close();
         });   
     });
 }
 
 exports.cancel_order = (req, res) => {
-    console.log(tag + "-cancel_order-" + res);
     var orderId = (req.params.order_id);
     
-    MongoClient.connect(url, function(err, db) {
-      if (err) throw err;
+    MongoClient.connect(dbConnectionString, function(err, db) {
+    if (err) 
+        res.status(500).send("Bad Connection");
+
       var dbo = db.db(dbName);
-      var myquery = { _id:mongoose.Types.ObjectId( orderId) };//orderID
+      var myquery = { _id : mongoose.Types.ObjectId(orderId) };
 
       dbo.collection("Orders").deleteOne(myquery, function(err, obj) {
-        if (err) throw err;
-        console.log("1 document deleted");
-        db.close();
+        if (err) 
+            res.status(500).send("Bad Connection");
+        
         res.status(200).send(obj);
+        db.close();
       });
     });
 }   
     
-//get all orders for today.
 exports.get_all = (req, res) => {
-    console.log(tag + "-get_all-" + res);
     var date_tod = (req.params.date);
-    MongoClient.connect(url,function(err,db){
-    if(err) throw err;
-    var dbo=db.db(dbName);
-    // var myquery = { _id:mongoose.Types.ObjectId( orderId) };//orderID
-    var query = { date:date_tod };
-    dbo.collection("Orders").find(query).toArray(function(err, result)
-        // dbo.collection("Orders").find({projection:(date:date)}).toArray(function(err, result)
+    
+    MongoClient.connect(dbConnectionString,function(err,db){
+        if (err) 
+            res.status(500).send("Bad Connection");
+
+        var dbo=db.db(dbName);
+        var query = { date:date_tod };
+        dbo.collection("Orders").find(query).toArray(function(err, result)
         {
-            if (err)throw err;
-            console.log(result);
-            db.close;
+            if (err) 
+                res.status(500).send("Bad Connection");
+                
             res.status(200).send(result);
+            db.close;
         });
     });
 }
-//get all paid orders for today.
+
 exports.get_all_paid = (req, res) => {
-    console.log(tag + "-get_all_paid" + res);
     var date_tod = (req.params.date);
     var  is_true=JSON.parse(req.params.is_paid);
-//var pan=(req.params.date,req.params.is_paid);
-    MongoClient.connect(url,function(err,db){
-    if(err) throw err;
-    var dbo=db.db(dbName);
-    // var myquery = { _id:mongoose.Types.ObjectId( orderId) };//orderID
-    var query = { date:date_tod ,is_paid:is_true };
-  //var query={ pan:date,is_paid};
-    dbo.collection("Orders").find(query).toArray(function(err, result)
-        // dbo.collection("Orders").find({projection:(date:date)}).toArray(function(err, result)
+
+    MongoClient.connect(dbConnectionString,function(err,db){
+        if (err) 
+            res.status(500).send("Bad Connection");
+
+        var dbo=db.db(dbName);
+        var query = { date:date_tod ,is_paid:is_true };
+        dbo.collection("Orders").find(query).toArray(function(err, result)
         {
-            if (err)throw err;
-            console.log(result);
-            db.close;
+            if (err) 
+                res.status(500).send("Bad Connection");
+
             res.status(200).send(result);
+            db.close;
         });
     });
 }
