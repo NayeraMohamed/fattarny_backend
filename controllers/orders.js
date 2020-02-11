@@ -146,3 +146,35 @@ exports.get_all_paid = (req, res) => {
         });
     });
 }
+
+exports.orders_summary = (req, res) => {
+    MongoClient.connect(dbConnectionString, function(err, db){
+        if(err)
+            console.log(err);
+            
+        dbo.collection('Orders').aggregate([
+            {
+                $match: {
+                    date : "2020-02-11",
+                    is_paid : false
+                }
+            }, 
+            {
+                $unwind: {
+                    path: "$order_items"
+                }
+            },
+            {
+                $group: {
+                    _id: "$order_items.item",
+                    count: {
+                        $sum : "$order_items.quantity"
+                    }
+                }
+            }
+        ]).toArray(function(err, res) {
+           console.log(res);         
+        });
+    });
+    
+}
