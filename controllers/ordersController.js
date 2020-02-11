@@ -115,7 +115,8 @@ exports.get_all = (req, res) => {
 
         var dbo = db.db(dbName);
         var query = { date : date_today };
-        dbo.collection("Orders").find(query).toArray(function(err, result)
+        var projection = {_id : 1, user_id : 1, total_price : 1};
+        dbo.collection("Orders").find(query, {projection}).toArray(function(err, result)
         {
             if (err) 
                 res.status(500).send("Bad Connection");
@@ -127,7 +128,7 @@ exports.get_all = (req, res) => {
 }
 
 exports.get_all_paid = (req, res) => {
-    var date_tod = (req.params.date);
+    var date_today = (req.params.date);
     var  is_true = JSON.parse(req.params.is_paid);
 
     MongoClient.connect(dbConnectionString, function(err, db){
@@ -135,8 +136,9 @@ exports.get_all_paid = (req, res) => {
             return res.status(500).send("Bad Connection");
 
         var dbo=db.db(dbName);
-        var query = { date : date_tod, is_paid : is_true };
-        dbo.collection("Orders").find(query).toArray(function(err, result)
+        var query = { date : date_today, is_paid : is_true };
+        var projection = {_id : 1, user_id : 1, total_price : 1};
+        dbo.collection("Orders").find(query, {projection}).toArray(function(err, result)
         {
             if (err) 
                 res.status(500).send("Bad Connection");
