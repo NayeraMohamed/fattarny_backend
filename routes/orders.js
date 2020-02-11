@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 
-const OrdersController = require('../controllers/orders');
+const OrdersController = require('../controllers/ordersController');
 
 router.get("/:user_id", OrdersController.get_orders_history);
 router.put("/set_is_paid/:order_id/:is_paid", OrdersController.set_is_paid);
