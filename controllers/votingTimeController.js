@@ -10,12 +10,11 @@ exports.update_start_time = function(req, res) {
           return res.status(500).send("Weak Internet Connection");
 
         var dbo = db.db(dbName);
-        var myquery = { start_time: /^0/ };
-        var newvalues = {$set: {start_time: req.params.time} };
-        dbo.collection("Voting_time").updateMany(myquery, newvalues, function(err, time) {
-          console.log(time);
+        var myquery = { company_id: "1"};
+        var newvalues = {$set: {start_time: req.params.start_time}};
+        dbo.collection("Voting_time").updateOne(myquery, newvalues, function(err, time) {
           if (err) return res.status(500).send("Weak Internet Connection");
-          res.status(200).send(time[0]);
+          res.status(200).send(req.params.start_time);
           db.close();
         });
       });
