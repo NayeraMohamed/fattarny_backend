@@ -152,7 +152,7 @@ exports.orders_summary = (req, res) => {
 
     MongoClient.connect(dbConnectionString, function(err, db){
         if(err)
-            console.log(err);
+            return res.status(500).send("Bad Connection");
         
         var dbo=db.db(dbName);
         dbo.collection('Orders').aggregate([
