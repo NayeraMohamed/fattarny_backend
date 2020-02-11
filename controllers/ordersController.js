@@ -148,33 +148,46 @@ exports.get_all_paid = (req, res) => {
 }
 
 exports.orders_summary = (req, res) => {
+    var orderDate = req.params.date;
+
     MongoClient.connect(dbConnectionString, function(err, db){
         if(err)
             console.log(err);
-            
+        
+        var dbo=db.db(dbName);
         dbo.collection('Orders').aggregate([
             {
                 $match: {
-                    date : "2020-02-11",
-                    is_paid : false
+                    date : orderDate,
+                    is_paid : true
                 }
             }, 
             {
                 $unwind: {
-                    path: "$order_items"
+                    path : "$order_items"
                 }
             },
             {
                 $group: {
-                    _id: "$order_items.item",
-                    count: {
+                    _id : "$order_items.item",
+                    count : {
                         $sum : "$order_items.quantity"
                     }
                 }
+            },
+            {
+                $project: {
+                    _id   : 0,
+                    count : 1,
+                    item  : "$_id"
+                }
             }
-        ]).toArray(function(err, res) {
-           console.log(res);         
+        ]).toArray(function(err, summary) {
+            if(err)
+                res.status(500).send("Bad Connection");
+            else
+                res.status(200).send(summary);
+            dbo.close;
         });
     });
-    
 }
